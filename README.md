@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![スクリーンショット](https://github.com/user-attachments/assets/be3884ee-d9ee-4651-8d90-4a35c83ee376)
 
-## Getting Started
+# プロダクト事前予約アプリ
 
-First, run the development server:
+## 概要
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+このプロジェクトでは、架空の新サービス「もくもく React」の事前予約サイトを構築します。  
+ユーザーが事前予約を行うと、予約確認メールが自動送信され、管理者にも通知が届くようにします。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 学習目標
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+SendGrid を使用したメール送信機能について、学習します。
+Next.js による API を活用したサーバーサイド処理や、HTML メールテンプレートの作成方法について、確認してください。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 推奨技術
 
-## Learn More
+このプロジェクトの難易度と趣旨を踏まえて、以下の使用をお勧めします。
 
-To learn more about Next.js, take a look at the following resources:
+- SendGrid を用いたメール送信機能
+- Next.js App Router を用いたフルスタック開発
+- TypeScript による型チェック
+- Tailwind CSS を用いたスタイリング
+- shadcn/ui を用いた UI 構築
+- React Hook Form を用いたフォーム管理
+- Zod を用いたフォームバリデーション
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🎯 お題
 
-## Deploy on Vercel
+- 「ユーザーストーリー」を全て満たすアプリを構築してください。
+- 必要に応じて、スクリーンショットやデモサイトの URL を参照してください。
+- スタイルは、あなた自身で独自にカスタマイズすることが可能です。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 必須機能
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **プロダクト紹介ページ**：
+   - もくもく React の特徴を表示するランディングページ。
+2. **事前予約フォーム**：
+   - 名前、メールアドレス、興味のある機能を入力できる。
+3. **メール送信機能**：
+   - 予約確認メールを予約者に送信する。
+   - 新規予約の通知を管理者に送信する。
+4. **予約管理画面**：
+   - 予約者の一覧と予約数を表示する。
+
+## ユーザーストーリー
+
+- [ ] ユーザーがサイトにアクセスすると、サービスのランディングページが表示されている。
+- [ ] 事前予約フォームで、名前、メールアドレス、興味のある機能（複数選択可）を入力できる。
+- [ ] 必要な情報を入力し、「**_事前予約する_**」ボタンをクリックすると、フォームが送信される。
+- [ ] 予約完了後、ユーザーに予約確認メールが SendGrid 経由で送信される。
+- [ ] 予約完了後、管理者に新規予約の通知メールが SendGrid 経由で送信される。
+- [ ] 予約完了ページで、予約受付完了のメッセージが表示される。
+- [ ] 管理画面で、これまでの予約者一覧と総予約数が確認できる。
+- [ ] 管理画面で、新規予約の通知メールを一括既読にすることができる。
+- [ ] メール送信に失敗した場合、適切なエラーメッセージが表示される。
+- [ ] フォームのバリデーションが動作し、不正な入力に対してエラーが表示される。
+- [ ] アプリケーションがデプロイされており、誰でもアクセス可能である。
