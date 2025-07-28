@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 const locale = navigator.languages
-  .map((lang) => lang.split("-").join("") as keyof typeof z.locales)
+  .map((lang) => lang.replaceAll("-", "") as keyof typeof z.locales)
   .find((lang) => z.locales[lang]);
 
 z.config(locale && z.locales[locale]() || z.locales.ja());
