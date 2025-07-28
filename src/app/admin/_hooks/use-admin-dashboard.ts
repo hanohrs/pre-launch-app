@@ -1,15 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Notification, Reservation } from "@/lib/types";
-import { interestOptions } from "@/lib/schemas";
+import { type NotificationEntity, type ReservationEntity } from "@/lib/types";
+import { type Interest, InterestOptions } from "@/lib/schemas";
 
 /**
  * 興味カテゴリIDから表示用ラベルを取得する
  */
-const getInterestLabel = (interestId: string): string => {
-  const option = interestOptions.find((opt) => opt.id === interestId);
-  return option ? option.label : interestId;
+const getInterestLabel = (interestId: Interest): string => {
+  return InterestOptions.shape[interestId];
 };
 
 /**
@@ -17,7 +16,7 @@ const getInterestLabel = (interestId: string): string => {
  *
  * 登録データから総数、今週の登録数、最も人気の興味分野を算出します。
  */
-const calculateStats = (reservations: Reservation[]) => {
+const calculateStats = (reservations: ReservationEntity[]) => {
   const total = reservations.length;
 
   // 今週の登録数を計算（過去7日間）
@@ -28,16 +27,16 @@ const calculateStats = (reservations: Reservation[]) => {
     return date > weekAgo;
   }).length;
 
+  // 興味分野ごとに集計
+  const interestCounts = reservations.reduce((acc, r) => {
+    r.interests.forEach((f) => {
+      acc[f] = (acc[f] || 0) + 1;
+    });
+    return acc;
+  }, {} as Record<Interest, number>);
+
   // 最も人気の興味分野を集計・算出
-  const mostPopularInterest =
-    Object.entries(
-      reservations.reduce((acc, r) => {
-        r.interests.forEach((f) => {
-          acc[f] = (acc[f] || 0) + 1;
-        });
-        return acc;
-      }, {} as Record<string, number>)
-    ).sort(([, a], [, b]) => b - a)[0]?.[0] || "N/A";
+  const mostPopularInterest = Object.entries(interestCounts).sort(([, a], [, b]) => b - a)[0]?.[0] as Interest | undefined;
 
   return { total, thisWeek, mostPopularInterest };
 };
@@ -50,8 +49,8 @@ const calculateStats = (reservations: Reservation[]) => {
  * 保持されます。
  */
 export const useAdminDashboard = () => {
-  const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [reservations, setReservations] = useState<ReservationEntity[]>([]);
+  const [notifications, setNotifications] = useState<NotificationEntity[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 

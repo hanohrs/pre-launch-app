@@ -12,22 +12,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Reservation } from "@/lib/types";
+import { type Interest } from "@/lib/schemas";
+import { type ReservationEntity } from "@/lib/types";
 
 interface DashboardStats {
   total: number;
   thisWeek: number;
-  mostPopularInterest: string;
+  mostPopularInterest?: Interest;
 }
 
 interface DashboardContentProps {
-  reservations: Reservation[];
-  paginatedReservations: Reservation[];
+  reservations: ReservationEntity[];
+  paginatedReservations: ReservationEntity[];
   stats: DashboardStats;
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  getInterestLabel: (interestId: string) => string;
+  getInterestLabel: (interestId: Interest) => string;
 }
 
 /**
@@ -96,7 +97,7 @@ export const DashboardContent = ({
           </CardHeader>
           <CardContent>
             <div className="text-lg font-bold text-white">
-              {getInterestLabel(stats.mostPopularInterest) || "N/A"}
+              {stats.mostPopularInterest && getInterestLabel(stats.mostPopularInterest) || "N/A"}
             </div>
             <p className="text-xs text-slate-400">最も選ばれている</p>
           </CardContent>

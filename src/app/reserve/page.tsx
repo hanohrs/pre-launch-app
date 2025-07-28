@@ -10,13 +10,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
-  reservationSchema,
-  type ReservationFormData,
-  interestOptions,
+  ReservationSchema,
+  type Reservation,
+  InterestOptions,
+  type Interest,
 } from "@/lib/schemas";
 
 export default function ReservePage() {
@@ -24,14 +33,8 @@ export default function ReservePage() {
   const router = useRouter();
 
   // React Hook Formでフォーム管理とバリデーションを設定
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-  } = useForm<ReservationFormData>({
-    resolver: zodResolver(reservationSchema),
+  const form = useForm({
+    resolver: zodResolver(ReservationSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -39,29 +42,13 @@ export default function ReservePage() {
     },
   });
 
-  const selectedInterests = watch("interests") || [];
-
-  /**
-   * 興味のあるサービスの選択状態を管理する
-   *
-   * @param interestId - 興味カテゴリのID
-   * @param checked - チェック状態
-   */
-  const handleInterestChange = (interestId: string, checked: boolean) => {
-    const currentInterests = selectedInterests;
-    const newInterests = checked
-      ? [...currentInterests, interestId]
-      : currentInterests.filter((id) => id !== interestId);
-    setValue("interests", newInterests);
-  };
-
   /**
    * フォーム送信処理
    *
    * APIエンドポイントへのデータ送信、ローカルストレージへの保存、
    * 管理画面用の通知データ作成を行います。
    */
-  const onSubmit = async (data: ReservationFormData) => {
+  const onSubmit = async (data: Reservation) => {
     setIsLoading(true);
 
     try {
@@ -154,100 +141,114 @@ export default function ReservePage() {
             <CardTitle className="text-white">登録情報</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              {/* 名前入力フィールド */}
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-slate-200">
-                  お名前
-                </Label>
-                <Input
-                  id="name"
-                  type="text"
-                  {...register("name")}
-                  className={`bg-slate-700 border-slate-600 text-white placeholder-slate-400 ${
-                    errors.name ? "border-red-500" : ""
-                  }`}
-                  placeholder="お名前を入力"
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                {/* 名前入力フィールド */}
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel htmlFor="name" className="text-slate-200">お名前</FormLabel>
+                      <FormControl>
+                        <Input
+                          id="name"
+                          type="text"
+                          {...field}
+                          placeholder="山田 太郎"
+                          className="bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                {errors.name && (
-                  <p className="text-sm text-red-400">{errors.name.message}</p>
-                )}
-              </div>
 
-              {/* メールアドレス入力フィールド */}
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-slate-200">
-                  メールアドレス
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  {...register("email")}
-                  className={`bg-slate-700 border-slate-600 text-white placeholder-slate-400 ${
-                    errors.email ? "border-red-500" : ""
-                  }`}
-                  placeholder="メールアドレスを入力"
+                {/* メールアドレス入力フィールド */}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel htmlFor="email" className="text-slate-200">メールアドレス</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="email"
+                          placeholder="メールアドレスを入力"
+                          className="bg-slate-700 border-slate-600 text-white placeholder-slate-400"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-                {errors.email && (
-                  <p className="text-sm text-red-400">{errors.email.message}</p>
-                )}
-              </div>
 
-              {/* 興味のあるサービス選択フィールド */}
-              <div className="space-y-4">
-                <Label className="text-slate-200">興味のあるサービス</Label>
-                <div className="space-y-3">
-                  {interestOptions.map((interest) => (
-                    <div
-                      key={interest.id}
-                      className="flex items-center space-x-2"
-                    >
-                      <Checkbox
-                        id={interest.id}
-                        checked={selectedInterests.includes(interest.id)}
-                        onCheckedChange={(checked) =>
-                          handleInterestChange(interest.id, checked as boolean)
-                        }
-                        className="border-slate-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                      />
-                      <Label
-                        htmlFor={interest.id}
-                        className="text-slate-300 cursor-pointer"
-                      >
-                        {interest.label}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-                {errors.interests && (
-                  <p className="text-sm text-red-400">
-                    {Array.isArray(errors.interests)
-                      ? errors.interests[0]?.message
-                      : errors.interests.message}
-                  </p>
-                )}
-              </div>
+                {/* 興味のあるサービス選択フィールド */}
+                <FormField
+                  control={form.control}
+                  name="interests"
+                  render={({ field }) => (
+                    <FormItem className="space-y-4 data-[error=true]:text-destructive">
+                      <FormLabel className="text-slate-200">興味のあるサービス</FormLabel>
+                      <FormControl>
+                        <div className="space-y-3">
+                          {Object.entries(InterestOptions.shape).map(([idString, label]) => {
+                            const id = idString as Interest;
+                            return (
+                              <FormItem
+                                key={id}
+                                className="flex items-center space-x-3"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    id={id}
+                                    checked={field.value.includes(id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([...field.value, id])
+                                        : field.onChange(field.value.filter((value) => value !== id))
+                                    }}
+                                    className="border-slate-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                                  />
+                                </FormControl>
+                                <FormLabel
+                                  htmlFor={id}
+                                  className="text-slate-300 cursor-pointer"
+                                >
+                                  {label}
+                                </FormLabel>
+                              </FormItem>
+                            );
+                          })}
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              {/* 送信ボタン */}
-              <Button
-                size="lg"
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:opacity-80 text-lg py-3 rounded-full"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    処理中...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="mr-2 h-5 w-5" />
-                    事前登録する
-                  </>
-                )}
-              </Button>
-            </form>
+                {/* 送信ボタン */}
+                <Button
+                  size="lg"
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:opacity-80 text-lg py-3 rounded-full"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      処理中...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="mr-2 h-5 w-5" />
+                      事前登録する
+                    </>
+                  )}
+                </Button>
+              </form>
+            </Form>
           </CardContent>
         </Card>
       </div>

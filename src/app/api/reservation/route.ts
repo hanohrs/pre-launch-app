@@ -4,7 +4,8 @@ import {
   createAdminNotification,
   createConfirmationEmail,
 } from "./_lib/email-templates";
-import { reservationSchema } from "@/lib/schemas";
+import * as z from "zod";
+import { ReservationSchema } from "@/lib/schemas";
 
 // SendGrid API キーを設定
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
@@ -37,12 +38,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Zodスキーマを使用してリクエストデータを検証
-    const validationResult = reservationSchema.safeParse(body);
+    const validationResult = ReservationSchema.safeParse(body);
     if (!validationResult.success) {
       return NextResponse.json(
         {
           error: "Validation failed",
-          details: validationResult.error.flatten().fieldErrors,
+          details: z.flattenError(validationResult.error).fieldErrors,
         },
         { status: 400 }
       );

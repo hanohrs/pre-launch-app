@@ -11,11 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { Notification } from "@/lib/types";
+import { type NotificationEntity } from "@/lib/types";
 
 interface AdminNavigationProps {
-  notifications: Notification[];
-  unreadNotifications: Notification[];
+  notifications: NotificationEntity[];
+  unreadNotifications: NotificationEntity[];
   onMarkAsRead: (id: string) => void;
   onMarkAllAsRead: () => void;
 }
@@ -94,9 +94,8 @@ export const AdminNavigation = ({
                     notifications.slice(0, 10).map((notification) => (
                       <DropdownMenuItem
                         key={notification.id}
-                        className={`p-3 cursor-pointer hover:bg-slate-700/50 ${
-                          !notification.isRead ? "bg-blue-500/10" : ""
-                        }`}
+                        className={`p-3 cursor-pointer hover:bg-slate-700/50 ${!notification.isRead ? "bg-blue-500/10" : ""
+                          }`}
                         onClick={() => onMarkAsRead(notification.id)}
                       >
                         <div className="flex items-start justify-between w-full">
