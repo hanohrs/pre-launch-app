@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { type NotificationEntity, type ReservationEntity } from "@/lib/types";
-import { type Interest, InterestOptions } from "@/lib/schemas";
+import { type Interest, interestOptions } from "@/lib/schemas";
 
 /**
  * 興味カテゴリIDから表示用ラベルを取得する
  */
 const getInterestLabel = (interestId: Interest): string => {
-  return InterestOptions.shape[interestId];
+  return interestOptions[interestId];
 };
 
 /**

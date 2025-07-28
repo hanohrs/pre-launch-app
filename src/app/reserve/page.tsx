@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import {
   ReservationSchema,
   type Reservation,
-  InterestOptions,
+  interestOptions,
   type Interest,
 } from "@/lib/schemas";
 
@@ -193,7 +193,7 @@ export default function ReservePage() {
                       <FormLabel className="text-slate-200">興味のあるサービス</FormLabel>
                       <FormControl>
                         <div className="space-y-3">
-                          {Object.entries(InterestOptions.shape).map(([idString, label]) => {
+                          {Object.entries(interestOptions).map(([idString, label]) => {
                             const id = idString as Interest;
                             return (
                               <FormItem

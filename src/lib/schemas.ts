@@ -12,15 +12,15 @@ z.config(locale && z.locales[locale]() || z.locales.ja());
  * アプリケーション全体で使用される興味分野の選択肢
  * フォーム表示、バリデーション、管理画面で共通して使用される
  */
-export const InterestOptions = z.strictObject({
+export const interestOptions = {
   habit: "習慣化プログラム",
   work: "作業配信",
   event: "ユーザーイベント",
   content: "学習コンテンツ",
   project: "共同プロジェクト",
-});
+} as const;
 
-const InterestEnum = InterestOptions.keyof();
+const InterestEnum = z.enum(Object.keys(interestOptions) as (keyof typeof interestOptions)[]);
 
 /**
  * 事前登録フォームのバリデーションスキーマ
