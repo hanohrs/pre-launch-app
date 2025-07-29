@@ -7,8 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -147,14 +148,14 @@ export default function ReservePage() {
                   control={form.control}
                   name="name"
                   render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel htmlFor="name" className="text-slate-200">お名前</FormLabel>
+                    <FormItem>
+                      <FormLabel className="text-slate-200">お名前</FormLabel>
                       <FormControl>
                         <Input
-                          id="name"
                           type="text"
+                          autoComplete="family-name given-name"
                           {...field}
-                          placeholder="山田 太郎"
+                          placeholder="お名前を入力"
                           className="bg-slate-700 border-slate-600 text-white placeholder-slate-400"
                         />
                       </FormControl>
@@ -168,12 +169,13 @@ export default function ReservePage() {
                   control={form.control}
                   name="email"
                   render={({ field }) => (
-                    <FormItem className="space-y-2">
-                      <FormLabel htmlFor="email" className="text-slate-200">メールアドレス</FormLabel>
+                    <FormItem>
+                      <FormLabel className="text-slate-200">メールアドレス</FormLabel>
                       <FormControl>
                         <Input
-                          {...field}
                           type="email"
+                          autoComplete="email"
+                          {...field}
                           placeholder="メールアドレスを入力"
                           className="bg-slate-700 border-slate-600 text-white placeholder-slate-400"
                         />
@@ -187,41 +189,42 @@ export default function ReservePage() {
                 <FormField
                   control={form.control}
                   name="interests"
-                  render={({ field }) => (
-                    <FormItem className="space-y-4 data-[error=true]:text-destructive">
-                      <FormLabel className="text-slate-200">興味のあるサービス</FormLabel>
-                      <FormControl>
-                        <div className="space-y-3">
-                          {Object.entries(interestOptions).map(([idString, label]) => {
-                            const id = idString as Interest;
-                            return (
-                              <FormItem
-                                key={id}
-                                className="flex items-center space-x-3"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    id={id}
-                                    checked={field.value.includes(id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...field.value, id])
-                                        : field.onChange(field.value.filter((value) => value !== id))
-                                    }}
-                                    className="border-slate-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                                  />
-                                </FormControl>
-                                <FormLabel
-                                  htmlFor={id}
-                                  className="text-slate-300 cursor-pointer"
+                  render={() => (
+                    <FormItem className="space-y-1">
+                      <Label className="text-slate-200">興味のあるサービス</Label>
+                      {Object.entries(interestOptions).map(([idString, label]) => {
+                        const id = idString as Interest;
+                        return (
+                          <FormField
+                            key={id}
+                            control={form.control}
+                            name="interests"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={id}
+                                  className="flex"
                                 >
-                                  {label}
-                                </FormLabel>
-                              </FormItem>
-                            );
-                          })}
-                        </div>
-                      </FormControl>
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value.includes(id)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...field.value, id])
+                                          : field.onChange(field.value.filter((value) => value !== id));
+                                      }}
+                                      className="border-slate-600 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="text-slate-300 cursor-pointer">
+                                    {label}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        );
+                      })}
                       <FormMessage />
                     </FormItem>
                   )}
